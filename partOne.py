@@ -39,34 +39,32 @@ for i, qi in zip( [1, 2, 3], q_all ):
 # QUESTION C
 
 def Qinv(y, tol = 1e-6, max_iter = 100):
-
+    
     # Initial guess for x based on Q(x) = 0.5 * erfc(x / sqrt(2))
     x = np.sqrt(2) * sp.erfcinv(2 * y)
     
     for _ in range(max_iter):
-        q_x = 0.5 * sp.erfc( x / np.sqrt(2))
+        q_x = 0.5 * sp.erfc( x / np.sqrt(2) )
         error = q_x - y
 
         if abs(error) < tol:
             return x
         
         # Update x using Newton's method
-        x -= error / ( np.sqrt(2) * np.exp(-x ** 2 / 2) / np.pi)
+        x -= error / ( np.sqrt(2) * np.exp(-x ** 2 / 2) / np.pi )
     
     raise RuntimeError("Qinv did not converge")
 
-# Test the Qinv function
-y_values = np.linspace(0.01, 0.1, num = 10)
+# test the Qinv function
+# create an array of SNR values (x values) in dB
+snr_values = np.linspace(-10, 20, num=1000)  #in dB
+x_values = np.sqrt(10 ** (snr_values / 10))  # Convert to linear scale
 
-for y in y_values:
-    x_approx = Qinv(y)
-    print("\nApproximate x for y = {:.2f} is {:.2f}".format(y, x_approx) )
+# calculate the accuracy for each SNR value
+q_values = 0.5 * sp.erfc(x_values / np.sqrt(2))
 
-    # Calculate the accuracy by comparing Q(x) and Qinv(Q(x))
-    x_val = np.linspace(2, 7, num = 1000)
-    q_val = 0.5 * sp.erfc( x_val / np.sqrt(2) )
-    x_reconstructed = [Qinv(q) for q in q_val]
+# calculate the accuracy for each SNR value
+x_reconstructed = [Qinv(q) for q in q_values]
+error = np.max(np.abs( snr_values - 10 * np.log10(x_reconstructed) ) )
 
-    # Calculate the maximum absolute error between x_values and x_reconstructed
-    max_error = np.max( np.abs(x_val - x_reconstructed) )
-    print("Maximum absolute error: {}".format(max_error) )
+print("Maximum absolute error:", error, "dB")
