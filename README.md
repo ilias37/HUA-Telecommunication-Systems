@@ -1,3 +1,3 @@
-Project 5ου εξαμήνου για το μάθημα "Τηλεπικοινωνιακά Συστήματα".
+5th semester project for the "Telecommunication Systems" course.
 
-Στο αρχείο README.pdf βρίσκεται η εκφώνηση της εργασίας
+In the file `README.pdf` is the requirements of the assignment
